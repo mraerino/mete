@@ -1,13 +1,18 @@
 language: ruby
 rvm:
  - "2.3.0"
+services:
+ - docker
 before_install:
  - sudo sh -c 'echo "deb http://apt.gemnasium.com stable main" > /etc/apt/sources.list.d/gemnasium.list'
  - sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com E5CEAB0AC5F1CA2A
  - sudo apt-get update
  - sudo apt-get install gemnasium-toolbelt
+before_script:
+ - docker run --rm --privileged multiarch/qemu-user-static:register --reset
 script:
  - bundle exec rake db:migrate RAILS_ENV=test
  - bundle exec rake
+ - docker build -t mraerino/mete:arm64 -f Dockerfile.arm64 .
 after_success:
  - gemnasium autoupdate run
