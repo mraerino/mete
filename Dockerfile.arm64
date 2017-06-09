@@ -1,4 +1,4 @@
-FROM arm64v8/ruby:2.4
+FROM arm64v8/ruby:2.4-slim
 RUN groupadd -r app && useradd -r -d /app -g app app
 COPY . /app
 WORKDIR /app
