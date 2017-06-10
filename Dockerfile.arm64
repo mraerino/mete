@@ -1,5 +1,10 @@
-FROM arm64v8/ruby:2.4-slim
-RUN groupadd -r app && useradd -r -d /app -g app app
+FROM multiarch/alpine:aarch64-edge
+
+# Ruby base
+RUN apk --update add ruby-dev build-base ruby-bigdecimal ruby-irb ruby-bundler git linux-headers sqlite-dev zlib-dev nodejs
+
+# App specific
+RUN addgroup -S app && adduser -S -h /app -g app app
 COPY . /app
 WORKDIR /app
 ENV RAILS_ENV=production
@@ -7,5 +12,6 @@ VOLUME var
 RUN chown -R app:app /app
 USER app
 RUN bundle install && bundle exec rake assets:precompile
+
 CMD bundle exec unicorn
 EXPOSE 8080
